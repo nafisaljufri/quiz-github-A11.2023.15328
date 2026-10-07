@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('id_obat')->constrained('obat')->cascadeOnDelete();
             $table->timestamps();
         });
-    }
+    }   
 
     /**
      * Reverse the migrations.
