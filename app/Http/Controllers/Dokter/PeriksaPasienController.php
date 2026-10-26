@@ -7,6 +7,7 @@ use App\Models\DaftarPoli;
 use App\Models\DetailPeriksa;
 use App\Models\Obat;
 use App\Models\Periksa;
+use App\Events\AntrianUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -80,6 +81,15 @@ class PeriksaPasienController extends Controller
                 ]);
             }
         });
+
+        try {
+            AntrianUpdated::dispatch(
+                $daftarPasien->id_jadwal,
+                DaftarPoli::nomorUntukJadwal($daftarPasien->id_jadwal)
+            );
+        } catch (\Throwable $e) {
+            report($e); // kalau Reverb mati, data periksa tetap aman
+        }
 
         return redirect()->route('periksa-pasien.index')
             ->with('success', 'Data periksa berhasil disimpan.');

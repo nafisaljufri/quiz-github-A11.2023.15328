@@ -26,7 +26,7 @@
 
         <div class="text-right hidden sm:block">
             <div class="text-sm font-semibold leading-tight">
-                {{ auth()->user()->name ?? 'Pengguna' }}
+                {{ strtoupper(substr(auth()->user()->nama ?? 'U', 0, 1)) }}
             </div>
             <div class="text-xs text-base-content/50 leading-tight">
                 {{ auth()->user()->role ?? 'Admin Sistem' }}

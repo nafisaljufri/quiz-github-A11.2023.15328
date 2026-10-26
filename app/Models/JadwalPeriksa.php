@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class JadwalPeriksa extends Model
 {
@@ -23,5 +24,20 @@ class JadwalPeriksa extends Model
     public function daftarPolis()
     {
         return $this->hasMany(DaftarPoli::class, 'id_jadwal');
+    }
+
+    public function tanggalBerikutnya(): Carbon
+    {
+        $map = [
+            'Senin' => Carbon::MONDAY, 'Selasa' => Carbon::TUESDAY, 'Rabu' => Carbon::WEDNESDAY,
+            'Kamis' => Carbon::THURSDAY, 'Jumat' => Carbon::FRIDAY, 'Sabtu' => Carbon::SATURDAY,
+            'Minggu' => Carbon::SUNDAY,
+        ];
+
+        $hariIni = Carbon::today();
+
+        return $hariIni->dayOfWeek === $map[$this->hari]
+            ? $hariIni
+            : $hariIni->copy()->next($map[$this->hari]);
     }
 }

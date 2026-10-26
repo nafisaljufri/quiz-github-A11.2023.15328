@@ -100,9 +100,15 @@
             </a>
 
             <a href="{{ route('pasien.daftar') }}"
-                class="{{ ($baseLink ?? '') . (request()->routeIs('pasien.daftar') ? $active : $inactive) }}">
-                <i class="fas fa-house-medical w-4 text-center"></i>
+                class="{{ $baseLink }} {{ request()->routeIs('pasien.daftar') ? $active : $inactive }}">
+                <i class="fas fa-calendar-check w-4 text-center"></i>
                 Pendaftaran Periksa
+            </a>
+
+            <a href="{{ route('pasien.riwayat') }}"
+                class="{{ $baseLink }} {{ request()->routeIs('pasien.riwayat*') ? $active : $inactive }}">
+                <i class="fas fa-clock-rotate-left w-4 text-center"></i>
+                Riwayat Pendaftaran
             </a>
 
 

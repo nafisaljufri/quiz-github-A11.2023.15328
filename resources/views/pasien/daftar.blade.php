@@ -74,49 +74,48 @@
             </form>
         </div>
     </div>
+    @push('scripts')
+    <script>
+    (() => {
+        const poli = document.getElementById('id_poli');
+        const jadwal = document.getElementById('id_jadwal');
+        const placeholder = document.getElementById('placeholderJadwal');
+        const status = document.getElementById('statusJadwal');
+        const jadwalOptions = Array.from(jadwal.options).filter(option => option.value);
+        const oldJadwal = @json((string) old('id_jadwal', ''));
+
+        function filterJadwal() {
+            const selectedPoli = poli.value;
+            let jumlahTersedia = 0;
+            jadwalOptions.forEach(option => {
+                const cocok = Boolean(selectedPoli) && option.dataset.poli === selectedPoli;
+                option.hidden = !cocok;
+                option.disabled = !cocok;
+                if (cocok) jumlahTersedia++;
+            });
+
+            if (!selectedPoli) {
+                placeholder.textContent = 'Pilih poli terlebih dahulu';
+                status.textContent = jadwalOptions.length === 0
+                    ? 'Belum ada jadwal dokter yang tersedia.'
+                    : 'Pilih poli untuk melihat jadwal dokter yang tersedia.';
+            } else if (jumlahTersedia === 0) {
+                placeholder.textContent = 'Tidak ada jadwal dokter untuk poli ini';
+                status.textContent = 'Belum ada jadwal dokter untuk poli yang dipilih.';
+            } else {
+                placeholder.textContent = 'Pilih jadwal dokter';
+                status.textContent = '';
+            }
+            const selected = jadwal.selectedOptions[0];
+            if (selected && selected.value && selected.hidden) jadwal.value = '';
+            if (selectedPoli && oldJadwal && jadwalOptions.some(option => option.value === oldJadwal && option.dataset.poli === selectedPoli)) {
+                jadwal.value = oldJadwal;
+            }
+        }
+
+        poli.addEventListener('change', filterJadwal);
+        filterJadwal();
+    })();
+    </script>
+    @endpush
 </x-layouts.app>
-
-@push('scripts')
-<script>
-(() => {
-    const poli = document.getElementById('id_poli');
-    const jadwal = document.getElementById('id_jadwal');
-    const placeholder = document.getElementById('placeholderJadwal');
-    const status = document.getElementById('statusJadwal');
-    const jadwalOptions = Array.from(jadwal.options).filter(option => option.value);
-    const oldJadwal = @json((string) old('id_jadwal', ''));
-
-    function filterJadwal() {
-        const selectedPoli = poli.value;
-        let jumlahTersedia = 0;
-        jadwalOptions.forEach(option => {
-            const cocok = Boolean(selectedPoli) && option.dataset.poli === selectedPoli;
-            option.hidden = !cocok;
-            option.disabled = !cocok;
-            if (cocok) jumlahTersedia++;
-        });
-
-        if (!selectedPoli) {
-            placeholder.textContent = 'Pilih poli terlebih dahulu';
-            status.textContent = jadwalOptions.length === 0
-                ? 'Belum ada jadwal dokter yang tersedia.'
-                : 'Pilih poli untuk melihat jadwal dokter yang tersedia.';
-        } else if (jumlahTersedia === 0) {
-            placeholder.textContent = 'Tidak ada jadwal dokter untuk poli ini';
-            status.textContent = 'Belum ada jadwal dokter untuk poli yang dipilih.';
-        } else {
-            placeholder.textContent = 'Pilih jadwal dokter';
-            status.textContent = '';
-        }
-        const selected = jadwal.selectedOptions[0];
-        if (selected && selected.value && selected.hidden) jadwal.value = '';
-        if (selectedPoli && oldJadwal && jadwalOptions.some(option => option.value === oldJadwal && option.dataset.poli === selectedPoli)) {
-            jadwal.value = oldJadwal;
-        }
-    }
-
-    poli.addEventListener('change', filterJadwal);
-    filterJadwal();
-})();
-</script>
-@endpush
