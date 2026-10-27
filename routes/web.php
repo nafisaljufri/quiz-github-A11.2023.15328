@@ -5,10 +5,12 @@ use App\Http\Controllers\Admin\AdminPoliController;
 use App\Http\Controllers\Admin\DokterController;
 use App\Http\Controllers\Admin\ObatController;
 use App\Http\Controllers\Admin\PasienController;
+use App\Http\Controllers\Admin\VerifikasiPembayaranController;
 use App\Http\Controllers\Dokter\JadwalPeriksaController;
 use App\Http\Controllers\Dokter\PeriksaPasienController;
 use App\Http\Controllers\Dokter\RiwayatPasienController;
 use App\Http\Controllers\Pasien\DashboardController;
+use App\Http\Controllers\Pasien\PembayaranController;
 use App\Http\Controllers\Pasien\PoliController;
 use App\Http\Controllers\Pasien\RiwayatController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +35,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('dokter', DokterController::class);
     Route::resource('pasien', PasienController::class);
     Route::resource('obat', ObatController::class)->except(['show']);
+
+    Route::get('/pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('admin.pembayaran.index');
+    Route::get('/pembayaran/{id}', [VerifikasiPembayaranController::class, 'show'])->name('admin.pembayaran.show');
+    Route::post('/pembayaran/{id}/konfirmasi', [VerifikasiPembayaranController::class, 'konfirmasi'])->name('admin.pembayaran.konfirmasi');
 });
 
 /* ===================== DOKTER ===================== */
@@ -57,14 +63,11 @@ Route::middleware(['auth', 'role:pasien'])->prefix('pasien')->group(function () 
 
     Route::get('/daftar', [PoliController::class, 'get'])->name('pasien.daftar');
     Route::post('/daftar', [PoliController::class, 'submit'])->name('pasien.daftar.submit');
-});
-
-Route::middleware(['auth', 'role:pasien'])->prefix('pasien')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('pasien.dashboard');
-
-    Route::get('/daftar', [PoliController::class, 'get'])->name('pasien.daftar');
-    Route::post('/daftar', [PoliController::class, 'submit'])->name('pasien.daftar.submit');
 
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('pasien.riwayat');
     Route::get('/riwayat/{id}', [RiwayatController::class, 'show'])->name('pasien.riwayat.show');
+
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pasien.pembayaran');
+    Route::get('/pembayaran/{id}', [PembayaranController::class, 'show'])->name('pasien.pembayaran.show');
+    Route::post('/pembayaran/{id}', [PembayaranController::class, 'upload'])->name('pasien.pembayaran.upload');
 });

@@ -80,6 +80,16 @@
                 Manajemen Obat
             </a>
 
+            @php $menunggu = \App\Models\Periksa::where('status_bayar', 'menunggu_verifikasi')->count(); @endphp
+            <a href="{{ route('admin.pembayaran.index') }}"
+                class="{{ $baseLink }} {{ request()->routeIs('admin.pembayaran*') ? $active : $inactive }}">
+                <i class="fas fa-file-invoice-dollar w-4 text-center"></i>
+                Verifikasi Pembayaran
+                @if($menunggu > 0)
+                <span class="ml-auto badge badge-warning badge-sm">{{ $menunggu }}</span>
+                @endif
+            </a>
+
         </div>
         @endif
 
@@ -109,6 +119,12 @@
                 class="{{ $baseLink }} {{ request()->routeIs('pasien.riwayat*') ? $active : $inactive }}">
                 <i class="fas fa-clock-rotate-left w-4 text-center"></i>
                 Riwayat Pendaftaran
+            </a>
+
+            <a href="{{ route('pasien.pembayaran') }}"
+                class="{{ $baseLink }} {{ request()->routeIs('pasien.pembayaran*') ? $active : $inactive }}">
+                <i class="fas fa-money-bill-wave w-4 text-center"></i>
+                Pembayaran
             </a>
 
 

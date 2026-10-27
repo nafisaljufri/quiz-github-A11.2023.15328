@@ -12,7 +12,16 @@ class Periksa extends Model
         'id_daftar_poli',
         'tgl_periksa',
         'catatan',
-        'biaya_periksa'
+        'biaya_periksa',
+        'status_bayar',
+        'bukti_bayar',
+        'tgl_upload_bukti',
+        'tgl_lunas',
+    ];
+
+    protected $casts = [
+        'tgl_upload_bukti' => 'datetime',
+        'tgl_lunas' => 'datetime',
     ];
 
     public function daftarPoli()
@@ -23,5 +32,11 @@ class Periksa extends Model
     public function detailPeriksas()
     {
         return $this->hasMany(DetailPeriksa::class, 'id_periksa');
+    }
+
+    // URL foto bukti (null jika belum upload)
+    public function getBuktiUrlAttribute(): ?string
+    {
+        return $this->bukti_bayar ? asset('storage/' . $this->bukti_bayar) : null;
     }
 }

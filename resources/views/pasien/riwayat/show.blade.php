@@ -1,10 +1,10 @@
 <x-layouts.app title="Detail Pemeriksaan">
 
     @php
-        $periksa = $daftar->periksa;
-        $jadwal = $daftar->jadwalPeriksa;
-        $totalObat = $periksa->detailPeriksas->sum(fn ($d) => $d->obat->harga ?? 0);
-        $biayaJasa = $periksa->biaya_periksa - $totalObat;
+    $periksa = $daftar->periksa;
+    $jadwal = $daftar->jadwalPeriksa;
+    $totalObat = $periksa->detailPeriksas->sum(fn ($d) => $d->obat->harga ?? 0);
+    $biayaJasa = $periksa->biaya_periksa - $totalObat;
     @endphp
 
     <div class="mb-6 flex items-center justify-between">
@@ -64,15 +64,15 @@
 
                 <ul class="divide-y divide-slate-100 text-sm">
                     @forelse($periksa->detailPeriksas as $detail)
-                        <li class="flex justify-between py-2">
-                            <span>
-                                {{ $detail->obat->nama_obat ?? '-' }}
-                                <span class="text-xs text-slate-400">{{ $detail->obat->kemasan ?? '' }}</span>
-                            </span>
-                            <span>Rp {{ number_format($detail->obat->harga ?? 0, 0, ',', '.') }}</span>
-                        </li>
+                    <li class="flex justify-between py-2">
+                        <span>
+                            {{ $detail->obat->nama_obat ?? '-' }}
+                            <span class="text-xs text-slate-400">{{ $detail->obat->kemasan ?? '' }}</span>
+                        </span>
+                        <span>Rp {{ number_format($detail->obat->harga ?? 0, 0, ',', '.') }}</span>
+                    </li>
                     @empty
-                        <li class="py-2 text-slate-400">Tidak ada obat.</li>
+                    <li class="py-2 text-slate-400">Tidak ada obat.</li>
                     @endforelse
                 </ul>
 
@@ -89,6 +89,10 @@
                         <span>Total Biaya</span>
                         <span>Rp {{ number_format($periksa->biaya_periksa, 0, ',', '.') }}</span>
                     </div>
+                    <a href="{{ route('pasien.pembayaran.show', $periksa->id) }}"
+                        class="btn btn-sm mt-3 w-full bg-[#2d4499] hover:bg-[#1e2d6b] text-white border-none">
+                        <i class="fas fa-money-bill-wave"></i> Lihat Pembayaran
+                    </a>
                 </div>
             </div>
         </div>
