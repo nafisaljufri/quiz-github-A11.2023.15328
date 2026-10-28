@@ -24,6 +24,11 @@
                     <input id="harga" type="number" name="harga" value="{{ old('harga', $obat->harga) }}" min="0" step="1" required class="input input-bordered w-full rounded-lg text-sm @error('harga') input-error @enderror">
                     @error('harga')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                 </div>
+                <div class="form-control mb-6">
+                    <label for="stok" class="label pb-1"><span class="text-sm font-semibold text-gray-700">Stok <span class="text-red-500">*</span></span></label>
+                    <input id="stok" type="number" name="stok" value="{{ old('stok', $obat->stok) }}" min="0" step="1" required class="input input-bordered w-full rounded-lg text-sm @error('stok') input-error @enderror">
+                    @error('stok')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                </div>
                 <div class="flex gap-3">
                     <button type="submit" class="flex items-center gap-2 px-6 py-2.5 bg-[#2d4499] hover:bg-[#1e2d6b] text-white rounded-lg text-sm font-semibold"><i class="fas fa-save"></i> Perbarui</button>
                     <a href="{{ route('obat.index') }}" class="flex items-center gap-2 px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-sm font-semibold">Kembali</a>

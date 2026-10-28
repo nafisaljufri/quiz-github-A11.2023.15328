@@ -13,6 +13,10 @@ use App\Http\Controllers\Pasien\DashboardController;
 use App\Http\Controllers\Pasien\PembayaranController;
 use App\Http\Controllers\Pasien\PoliController;
 use App\Http\Controllers\Pasien\RiwayatController;
+use App\Http\Controllers\NotifikasiController;
+use App\Http\Controllers\Admin\ExportAdminController;
+use App\Http\Controllers\Dokter\ExportDokterController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -39,6 +43,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('admin.pembayaran.index');
     Route::get('/pembayaran/{id}', [VerifikasiPembayaranController::class, 'show'])->name('admin.pembayaran.show');
     Route::post('/pembayaran/{id}/konfirmasi', [VerifikasiPembayaranController::class, 'konfirmasi'])->name('admin.pembayaran.konfirmasi');
+
+    Route::get('/export/dokter', [ExportAdminController::class, 'dokter'])->name('admin.export.dokter');
+    Route::get('/export/pasien', [ExportAdminController::class, 'pasien'])->name('admin.export.pasien');
+    Route::get('/export/obat', [ExportAdminController::class, 'obat'])->name('admin.export.obat');
 });
 
 /* ===================== DOKTER ===================== */
@@ -55,6 +63,9 @@ Route::middleware(['auth', 'role:dokter'])->prefix('dokter')->group(function () 
 
     Route::get('/riwayat-pasien', [RiwayatPasienController::class, 'index'])->name('riwayat-pasien.index');
     Route::get('/riwayat-pasien/{id}', [RiwayatPasienController::class, 'show'])->name('riwayat-pasien.show');
+
+    Route::get('/export/jadwal-periksa', [ExportDokterController::class, 'jadwalPeriksa'])->name('dokter.export.jadwal');
+    Route::get('/export/riwayat-pasien', [ExportDokterController::class, 'riwayatPasien'])->name('dokter.export.riwayat');
 });
 
 /* ===================== PASIEN ===================== */
@@ -71,3 +82,20 @@ Route::middleware(['auth', 'role:pasien'])->prefix('pasien')->group(function () 
     Route::get('/pembayaran/{id}', [PembayaranController::class, 'show'])->name('pasien.pembayaran.show');
     Route::post('/pembayaran/{id}', [PembayaranController::class, 'upload'])->name('pasien.pembayaran.upload');
 });
+
+/* ===================== NOTIFIKASI ===================== */
+foreach (['admin', 'dokter', 'pasien'] as $role) {
+    Route::middleware(['auth', "role:$role"])->prefix($role)->group(function () use ($role) {
+        Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name("$role.notifikasi");
+        Route::post('/notifikasi/baca-semua', [NotifikasiController::class, 'bacaSemua'])->name("$role.notifikasi.baca-semua");
+        Route::post('/notifikasi/{id}/baca', [NotifikasiController::class, 'baca'])->name("$role.notifikasi.baca");
+    });
+}
+
+/* ===================== PROFILE (semua role) ===================== */
+foreach (['admin', 'dokter', 'pasien'] as $role) {
+    Route::middleware(['auth', "role:$role"])->prefix($role)->group(function () use ($role) {
+        Route::get('/profile', [ProfileController::class, 'edit'])->name("profile.$role");
+        Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name("profile.$role.password");
+    });
+}

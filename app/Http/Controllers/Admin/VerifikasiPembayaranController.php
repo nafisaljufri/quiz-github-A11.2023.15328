@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Periksa;
+use App\Notifications\PembayaranLunasNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VerifikasiPembayaranController extends Controller
 {
@@ -37,20 +40,35 @@ class VerifikasiPembayaranController extends Controller
 
     public function konfirmasi($id)
     {
-        $periksa = Periksa::with('daftarPoli.pasien')->findOrFail($id);
+        $periksa = DB::transaction(function () use ($id) {
+            $periksa = Periksa::with('daftarPoli.pasien')->lockForUpdate()->findOrFail($id);
 
-        // Hanya tagihan yang menunggu verifikasi yang boleh dikonfirmasi
-        if ($periksa->status_bayar !== 'menunggu_verifikasi') {
+            // Hanya tagihan yang menunggu verifikasi yang boleh dikonfirmasi
+            if ($periksa->status_bayar !== 'menunggu_verifikasi') {
+                return null;
+            }
+
+            $periksa->update([
+                'status_bayar' => 'lunas',
+                'tgl_lunas' => now(),
+            ]);
+
+            return $periksa;
+        });
+
+        if (! $periksa) {
             return redirect()->route('admin.pembayaran.index')
                 ->with('error', 'Tagihan ini tidak sedang menunggu verifikasi.');
         }
 
-        $periksa->update([
-            'status_bayar' => 'lunas',
-            'tgl_lunas' => now(),
-        ]);
-
-        // TAHAP 5: kirim notifikasi ke pasien di sini
+        try {
+            $periksa->daftarPoli->pasien?->notify(new PembayaranLunasNotification($periksa));
+        } catch (\Throwable $e) {
+            Log::error('Gagal mengirim notifikasi pembayaran lunas.', [
+                'periksa_id' => $periksa->id,
+                'exception' => $e,
+            ]);
+        }
 
         return redirect()->route('admin.pembayaran.index')
             ->with('success', 'Pembayaran berhasil dikonfirmasi sebagai lunas.');

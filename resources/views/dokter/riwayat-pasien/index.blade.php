@@ -1,10 +1,15 @@
 <x-layouts.app title="Riwayat Pasien">
 
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
         <h2 class="text-2xl font-bold text-slate-800">
             Riwayat Pasien
         </h2>
+
+        <a href="{{ route('dokter.export.riwayat') }}"
+            class="btn bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-lg px-5">
+            <i class="fas fa-file-excel"></i> Export Excel
+        </a>
     </div>
 
     {{-- Card --}}

@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Pasien;
 
 use App\Http\Controllers\Controller;
 use App\Models\Periksa;
+use App\Notifications\PembayaranDiuploadNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PembayaranController extends Controller
@@ -38,6 +40,11 @@ class PembayaranController extends Controller
                 ->with('error', 'Tagihan ini sudah lunas.');
         }
 
+        if ($periksa->status_bayar === 'menunggu_verifikasi') {
+            return redirect()->route('pasien.pembayaran.show', $periksa->id)
+                ->with('error', 'Bukti pembayaran sedang menunggu verifikasi.');
+        }
+
         $request->validate([
             'bukti_bayar' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ], [
@@ -60,10 +67,22 @@ class PembayaranController extends Controller
             'tgl_upload_bukti' => now(),
         ]);
 
-        // TAHAP 5: kirim notifikasi ke dokter di sini
+        $periksa->load('daftarPoli.pasien', 'daftarPoli.jadwalPeriksa.dokter');
+        $dokter = $periksa->daftarPoli->jadwalPeriksa->dokter ?? null;
+
+        if ($dokter) {
+            try {
+                $dokter->notify(new PembayaranDiuploadNotification($periksa));
+            } catch (\Throwable $e) {
+                Log::error('Gagal mengirim notifikasi bukti pembayaran.', [
+                    'periksa_id' => $periksa->id,
+                    'exception' => $e,
+                ]);
+            }
+        }
 
         return redirect()->route('pasien.pembayaran.show', $periksa->id)
-            ->with('success', 'Bukti pembayaran berhasil diupload. Menunggu verifikasi admin.');
+            ->with('success', 'Bukti pembayaran berhasil diupload dan menunggu verifikasi.');
     }
 
     // Hanya pemeriksaan milik pasien yang sedang login

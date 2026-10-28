@@ -170,6 +170,20 @@
 
     </div>
 
+    {{-- ================= AKUN (semua role) ================= --}}
+    @auth
+    <p class="text-xs uppercase tracking-widest text-indigo-400 px-3 mb-3 mt-6">
+        Akun
+    </p>
+
+    <div class="space-y-1">
+        <a href="{{ route('profile.' . auth()->user()->role) }}"
+            class="{{ $baseLink }} {{ request()->routeIs('profile.*') ? $active : $inactive }}">
+            <i class="fas fa-user-gear w-4 text-center"></i>
+            Profile
+        </a>
+    </div>
+    @endauth
 
     {{-- ================= LOGOUT ================= --}}
     <div class="p-4 border-t border-white/10">

@@ -1,3 +1,11 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::table('periksa', function (Blueprint $table) {
@@ -15,3 +23,4 @@
             $table->dropColumn(['status_bayar', 'bukti_bayar', 'tgl_upload_bukti', 'tgl_lunas']);
         });
     }
+};

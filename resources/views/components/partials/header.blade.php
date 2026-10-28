@@ -16,6 +16,8 @@
         </div>
     </div>
 
+    @include('components.partials.notifikasi')
+
     {{-- Fullscreen --}}
     <button onclick="toggleFullscreen()" class="btn btn-square btn-ghost">
         <i id="fsIcon" class="fas fa-expand w-5 h-5"></i>
@@ -46,16 +48,16 @@
 
 <script>
     function toggleFullscreen() {
-    const icon = document.getElementById('fsIcon');
+        const icon = document.getElementById('fsIcon');
 
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        icon.classList.remove('fa-expand');
-        icon.classList.add('fa-compress');
-    } else {
-        document.exitFullscreen();
-        icon.classList.remove('fa-compress');
-        icon.classList.add('fa-expand');
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            icon.classList.remove('fa-expand');
+            icon.classList.add('fa-compress');
+        } else {
+            document.exitFullscreen();
+            icon.classList.remove('fa-compress');
+            icon.classList.add('fa-expand');
+        }
     }
-}
 </script>
